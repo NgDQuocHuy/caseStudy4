@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <title>Document</title>
+    <link rel="shortcut icon" href="/assets/favicon.ico">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <th:block th:replace="layouts/head"/>
+    <link rel="stylesheet" href="/assets/css/upload.css">
+
+    <style>
+
+        .fl {
+            float: left;
+        }
+
+        .card-registration .select-input.form-control[readonly]:not([disabled]) {
+            font-size: 1rem;
+            line-height: 2.15;
+            padding-left: .75em;
+            padding-right: .75em;
+        }
+
+        .card-registration .select-arrow {
+            top: 13px;
+        }
+    </style>
+</head>
+<body class="bg-dark">
+
+<div class="main-container bg-dark">
+    <div class="container-fluid main-container">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col">
+                <div class="card card-registration my-4">
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <div>
+                                <a style="margin: 20px" class="btn btn-success" href="/">Về với Login</a>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="file-upload">
+                                    <button class="file-upload-btn" type="button"
+                                            onclick="$('.file-upload-input').trigger( 'click' )">Add Image
+                                    </button>
+
+                                    <div class="image-upload-wrap">
+                                        <input class="file-upload-input" id="imageFile" type='file'
+                                               onchange="readURL(this);"
+                                               accept="image/*"/>
+                                        <div class="drag-text">
+                                            <h3>Drag and drop a file or select add Image</h3>
+                                        </div>
+                                    </div>
+                                    <div class="file-upload-content">
+                                        <img class="file-upload-image" src="#" alt="your image"/>
+                                        <div class="image-title-wrap">
+                                            <button type="button" onclick="removeUpload()" class="remove-image">
+                                                Remove <span class="image-title">Uploaded Image</span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-8">
+                            <div class="card-body p-md-5 text-black">
+                                <h3 class="mb-5 text-uppercase">Đăng Ký Tài Khoản Mới</h3>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-outline">
+                                            <input type="text" id="emailCre" class="form-control form-control-lg"
+                                                   placeholder="Input email..."/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-outline">
+                                            <input type="password" id="passwordCre" class="form-control form-control-lg"
+                                                   placeholder="Input password..."/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-md-flex justify-content-start align-items-center mb-4 py-2">
+
+                                    <label class="mb-0 me-4">Select Role: </label>
+
+                                    <div class="form-check form-check-inline mb-0 me-6">
+                                        <input class="form-check-input" type="radio" checked name="roleCre" id="roleUser"
+                                               value="1"/>
+                                        <label class="form-check-label" for="roleUser">User</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline mb-0 me-6">
+                                        <input class="form-check-input" type="radio" name="roleCre" id="roleAdmin"
+                                               value="2"/>
+                                        <label class="form-check-label" for="roleAdmin">Admin</label>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-outline">
+                                            <input type="text" id="fullnameCre" class="form-control form-control-lg"
+                                                   placeholder="Input your name..."/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-outline">
+                                            <input type="text" id="phoneCre" class="form-control form-control-lg"
+                                                   placeholder="Input number phone.."/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-outline mb-4">
+                                    <input type="text" id="addressCre" class="form-control form-control-lg"
+                                           placeholder="Input address..."/>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4 mb-4">
+                                        <label>Province</label>
+                                        <select name="provinceIdCre" id="provinceIdCre" class="form-control">
+
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <label>District</label>
+                                        <select name="districtIdCre" id="districtIdCre" class="form-control">
+
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <label>Ward</label>
+                                        <select name="wardIdCre" id="wardIdCre" class="form-control">
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-lg-6">
+                                        <button id="btnRegister" class="btn btn-warning btn-lg ms-2">Register</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/assets/jquery/jquery-v3.6.0.min.js"></script>
+<script type="text/javascript" src="/assets/izitoast/v1.4.0/iziToast-1.4.0.js"></script>
+<script src="/assets/js/app.js"></script>
+
+
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('.image-upload-wrap').hide();
+                $('.file-upload-image').attr('src', e.target.result);
+                $('.file-upload-content').show();
+            };
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            removeUpload();
+        }
+    }
+
+    function removeUpload() {
+        $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+        $('.file-upload-content').hide();
+        $('.image-upload-wrap').show();
+    }
+
+    $('.image-upload-wrap').bind('dragover', function () {
+        $('.image-upload-wrap').addClass('image-dropping');
+    });
+
+    $('.image-upload-wrap').bind('dragleave', function () {
+        $('.image-upload-wrap').removeClass('image-dropping');
+    });
+
+    let page = {
+        urls: {
+            register: App.BASE_URL_AUTH + '/register'
+        },
+        dialogs: {},
+        elements: {},
+        commands: {},
+        initializeEventControl: {}
+    }
+    let formData = new FormData();
+    let locationRegion = new LocationRegion();
+
+    page.elements.emailCre = $("#emailCre");
+    page.elements.passwordCre = $("#passwordCre");
+
+    page.elements.fullnameCre = $("#fullnameCre");
+    page.elements.phoneCre = $("#phoneCre");
+
+    page.elements.provinceCre = $("#provinceIdCre");
+    page.elements.districtCre = $("#districtIdCre");
+    page.elements.wardCre = $("#wardIdCre");
+    page.elements.addressCre = $("#addressCre");
+
+    page.elements.imageFile = $("#imageFile");
+    page.elements.btnRegister = $("#btnRegister");
+
+    page.commands.getAllProvinces = () => {
+        return $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "https://vapi.vnappmob.com/api/province/"
+        })
+            .done((data) => {
+                page.elements.provinceCre.empty();
+
+                let results = data.results;
+                results.map(item => {
+                    let str = `<option value="${item.province_id}">${item.province_name}</option>`;
+                    page.elements.provinceCre.append(str);
+                })
+
+            })
+            .fail((xqXHR) => {
+                App.SweetAlert.showAlertError("Không thể tải dữ liệu Tỉnh/Thành phố");
+            })
+    }
+
+    page.commands.getAllDistrictsByProvinceId = (provinceId) => {
+        return $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "https://vapi.vnappmob.com/api/province/district/" + provinceId
+        })
+            .done((data) => {
+
+                page.elements.districtCre.empty();
+
+                let results = data.results;
+
+                results.map(item => {
+                    let str = `<option value="${item.district_id}">${item.district_name}</option>`;
+                    page.elements.districtCre.append(str);
+                })
+            })
+            .fail((xqXHR) => {
+                App.SweetAlert.showAlertError("Không thể tải dữ liệu Thành phố/Quận/Huyện");
+            })
+    }
+
+    page.commands.getAllWardsByDistrictId = (districtId) => {
+        return $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "https://vapi.vnappmob.com/api/province/ward/" + districtId
+        })
+            .done((data) => {
+                page.elements.wardCre.empty();
+
+                let results = data.results;
+
+                results.map(item => {
+                    let str = `<option value="${item.ward_id}">${item.ward_name}</option>`;
+                    page.elements.wardCre.append(str);
+                })
+            })
+            .fail((xqXHR) => {
+                App.SweetAlert.showAlertError("Không thể tải dữ liệu Phường/Xã/Thị trấn");
+            })
+    }
+
+    page.elements.provinceCre.on("change", function () {
+        let provinceId = $(this).val();
+
+        page.commands.getAllDistrictsByProvinceId(provinceId).then(() => {
+            let districtId = page.elements.districtCre.val();
+
+            page.commands.getAllWardsByDistrictId(districtId);
+        });
+    });
+
+    page.elements.districtCre.on("change", function () {
+        let districtId = $(this).val();
+
+        page.commands.getAllWardsByDistrictId(districtId);
+    })
+
+    page.commands.register = () => {
+        locationRegion.id = 0;
+        locationRegion.provinceId = page.elements.provinceCre.val();
+        locationRegion.provinceName = page.elements.provinceCre.find("option:selected").text();
+        locationRegion.districtId = page.elements.districtCre.val();
+        locationRegion.districtName = page.elements.districtCre.find("option:selected").text();
+        locationRegion.wardId = page.elements.wardCre.val();
+        locationRegion.wardName = page.elements.wardCre.find("option:selected").text();
+        locationRegion.address = page.elements.addressCre.val();
+
+        formData.append("username", page.elements.emailCre.val().toString());
+        formData.append("password", page.elements.passwordCre.val().toString());
+
+        formData.append("fullName", page.elements.fullnameCre.val().toString());
+        formData.append("phone", page.elements.phoneCre.val().toString());
+        formData.append("roleId", $('input[name=roleCre]:checked').val());
+        formData.append("file", page.elements.imageFile[0].files[0]);
+
+        formData.append("provinceId", page.elements.provinceCre.val().toString());
+        formData.append("provinceName", page.elements.provinceCre.find("option:selected").text());
+        formData.append("districtId", page.elements.districtCre.val().toString());
+        formData.append("districtName", page.elements.districtCre.find("option:selected").text());
+        formData.append("wardId", page.elements.wardCre.val().toString());
+        formData.append("wardName", page.elements.wardCre.find("option:selected").text());
+        formData.append("address", page.elements.addressCre.val().toString());
+
+        $.ajax({
+            type: "POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            url: page.urls.register,
+            data: formData
+        }).done((data) => {
+            page.removeForm();
+            App.IziToast.showSuccessAlert(App.AlertMessageVi.SUCCESS_CREATED);
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 1500)
+        }).fail((err) => {
+            page.removeForm();
+            App.IziToast.showErrorAlert(App.AlertMessageVi.ERROR_400);
+        })
+    }
+
+    page.removeForm = () => {
+        formData.delete("username");
+        formData.delete("password");
+        formData.delete("fullName");
+        formData.delete("phone");
+        formData.delete("roleId");
+        formData.delete("file");
+        formData.delete("provinceId");
+        formData.delete("provinceName");
+        formData.delete("districtId");
+        formData.delete("districtName");
+        formData.delete("wardId");
+        formData.delete("wardName");
+        formData.delete("address");
+    }
+
+    page.loadData = () => {
+
+        page.commands.getAllProvinces().then(() => {
+            let provinceId = page.elements.provinceCre.val();
+
+            page.commands.getAllDistrictsByProvinceId(provinceId).then(() => {
+                let districtId = page.elements.districtCre.val();
+
+                page.commands.getAllWardsByDistrictId(districtId);
+            });
+        })
+    }
+    page.elements.btnRegister.on("click", () => {
+        page.commands.register();
+        page.removeForm();
+    })
+
+    page.initializeEventControl = () => {
+    }
+
+    $(() => {
+        page.loadData();
+        page.initializeEventControl();
+    })
+</script>
+</body>
+
+</html>

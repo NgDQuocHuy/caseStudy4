@@ -1,0 +1,71 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<th:block th:fragment="modalCreate">
+    <div class="modal fade" id="modalCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Add New Product</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="frmCreate" method="post">
+                        <div class="col-lg-6 fl">
+                            <div class="row col-lg-12 mt-3">
+                                <div class="col-lg-12">
+                                    <label>Title</label>
+                                    <input type="text" id="titleCre" name="titleCre" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row col-lg-12 mt-3">
+                                <div class="col-lg-6">
+                                    <label>Price</label>
+                                    <input type="text" id="priceCre" name="priceCre" class="form-control">
+                                </div>
+                                <div class="col-lg-6">
+                                    <label>Type</label>
+                                    <select name="typeIdCre" id="typeIdCre" class="form-control">
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="renderErrorCre"  style="padding-top: 10px">
+
+                            </div>
+                        </div>
+                        <div class="col-lg-6 fl">
+                            <div class="file-upload">
+                                <button class="file-upload-btn" type="button"
+                                        onclick="$('.file-upload-input').trigger( 'click' )">Add Image
+                                </button>
+
+                                <div class="image-upload-wrap">
+                                    <input class="file-upload-input" id="imageFile" type='file'
+                                           onchange="readURL(this);"
+                                           accept="image/*"/>
+                                    <div class="drag-text">
+                                        <h3>Drag and drop a file or select add Image</h3>
+                                    </div>
+                                </div>
+                                <div class="file-upload-content">
+                                    <img class="file-upload-image" src="#" alt="your image"/>
+                                    <div class="image-title-wrap">
+                                        <button type="button" onclick="removeUpload()" class="remove-image">
+                                            Remove <span class="image-title">Uploaded Image</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="btnAdd" class="btn btn-outline-secondary">
+                        <i class="fas fa-pencil-alt"></i>
+                        Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>

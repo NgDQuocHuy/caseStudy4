@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <title>Quốc Huy Shop</title>
+    <th:block th:replace="layouts/head"/>
+    <style>
+        .fl {
+            float: left;
+        }
+
+        .card-registration .select-input.form-control[readonly]:not([disabled]) {
+            font-size: 1rem;
+            line-height: 2.15;
+            padding-left: .75em;
+            padding-right: .75em;
+        }
+
+        .card-registration .select-arrow {
+            top: 13px;
+        }
+
+        .hero-image {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/assets/shop/img/sp_online_phone82_generated.jpg");
+
+            height: 400px;
+
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+
+        /* Place text in the middle of the image */
+        .hero-text h1{
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 5rem;
+            font-family: "Comic Sans MS";
+        }
+    </style>
+</head>
+
+<body>
+<div class="hero-image">
+    <div class="hero-text">
+        <h1>QHuy Shop</h1>
+<!--        <button>Hire me</button>-->
+    </div>
+</div>
+<header id="header" class="navbar navbar-expand-lg navbar-height navbar-flush navbar-container navbar-bordered">
+    <div class="navbar-nav-wrap">
+
+        <div class="navbar-nav-wrap-content-right">
+
+            <ul class="navbar-nav align-items-center flex-row">
+                <li>
+                    <div class="col-sm-auto">
+                        <button id="btnShowAddModal" class="btn btn-primary" style="margin-right: 20px">
+                            <i class="fas fa-plus"></i>
+                            <span>Add New Product</span>
+                        </button>
+                    </div>
+                </li>
+                <li>
+                    <div class="col-sm-auto">
+                        <a class="btn btn-secondary" href="/logout">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+<main id="content" role="main" class="main">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center mb-3">
+                <div class="col-sm mb-2 mb-sm-0">
+                </div>
+
+            </div>
+            <div class="js-nav-scroller hs-nav-scroller-horizontal">
+                <ul class="nav nav-tabs page-header-tabs" id="pageHeaderTab" role="tablist">
+                    <li class="nav-item">
+                        <h4><a class="nav-link active" href="/">All Products</a></h4>
+                    </li>
+                    <li class="nav-item">
+                        <button id="btnGoUser" class="nav-link"><h4>All Users</h4></button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card">
+            <div class="table-responsive datatable-custom">
+                <div id="datatable_wrapper" class="dataTables_wrapper no-footer">
+                    <div class="row" id="tbProduct">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="product/modalCreate :: modalCreate"/>
+<th:block th:replace="product/modalEdit :: modalEdit"/>
+
+<th:block th:replace="layouts/script"/>
+<script>
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('.image-upload-wrap').hide();
+                $('.file-upload-image').attr('src', e.target.result);
+                $('.file-upload-content').show();
+            };
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            removeUpload();
+        }
+    }
+
+    function removeUpload() {
+        $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+        $('.file-upload-content').hide();
+        $('.image-upload-wrap').show();
+    }
+
+    $('.image-upload-wrap').bind('dragover', function () {
+        $('.image-upload-wrap').addClass('image-dropping');
+    });
+
+    $('.image-upload-wrap').bind('dragleave', function () {
+        $('.image-upload-wrap').removeClass('image-dropping');
+    });
+
+    function readURLUp(input) {
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('.image-upload-wrap1').hide();
+                $('.file-upload-image1').attr('src', e.target.result);
+                $('.file-upload-content1').show();
+            };
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            removeUpload();
+        }
+    }
+
+    function removeUpload() {
+        $('.file-upload-input1').replaceWith($('.file-upload-input1').clone());
+        $('.file-upload-content1').hide();
+        $('.image-upload-wrap1').show();
+    }
+
+    $('.image-upload-wrap1').bind('dragover', function () {
+        $('.image-upload-wrap1').addClass('image-dropping');
+    });
+
+    $('.image-upload-wrap1').bind('dragleave', function () {
+        $('.image-upload-wrap1').removeClass('image-dropping');
+    });
+
+    let page = {
+        urls: {
+            getAllProducts: App.BASE_URL_Product,
+            getAllType: App.BASE_URL_Product + "/type",
+            addProduct: App.BASE_URL_Product + "/create",
+            updateProduct: App.BASE_URL_Product + "/update",
+            delete: App.BASE_URL_Product + "/delete",
+            urlImage: "https://res.cloudinary.com/ngdquochuy241/image/upload/image_images",
+            goToUser: App.BASE_URL_User
+
+        },
+        elements: {},
+        loadData: {},
+        commands: {},
+        dialogs: {
+            elements: {},
+            loadData: {},
+            commands: {},
+        },
+        initializeEventControl: {}
+    }
+
+    let product = new Product();
+    let type = new Type();
+    let formData = new FormData();
+    page.elements.currentRow = $("#currentRow");
+    page.elements.showProduct = $("#tbProduct");
+
+    page.elements.choice = $(".choice");
+
+    page.elements.btnShowAddModal = $("#btnShowAddModal");
+    page.elements.modalCreate = $("#modalCreate");
+    page.dialogs.elements.frmCreate = $("#frmCreate");
+    page.dialogs.elements.titleCre = $("#titleCre");
+    page.dialogs.elements.priceCre = $("#priceCre");
+    page.elements.imageFile = $("#imageFile");
+    page.dialogs.elements.typeCre = $("#typeIdCre");
+    page.dialogs.elements.btnAdd = $("#btnAdd")
+    page.dialogs.elements.renderErrorCre = $("#renderErrorCre")
+
+    page.elements.btnShowEditModal = $("#btnShowEditModal");
+    page.elements.modalEdit = $("#modalEdit");
+    page.dialogs.elements.frmEdit = $("#frmEdit")
+    page.dialogs.elements.productIdEdit = $("#productIdEdit");
+    page.dialogs.elements.titleEdit = $("#titleEdit")
+    page.dialogs.elements.priceEdit = $("#priceEdit")
+    page.elements.imageFileEdit = $("#imageFileEdit");
+    page.dialogs.elements.typeEdit = $("#typeIdEdit")
+    page.dialogs.elements.imageEdit = $("#imageEdit")
+    page.dialogs.elements.btnEdit = $("#btnEdit")
+
+    page.commands.getAllType = () => {
+        return $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: page.urls.getAllType
+        })
+            .done((data) => {
+                page.dialogs.elements.typeCre.empty();
+                page.dialogs.elements.typeEdit.empty();
+
+                data.map(item => {
+                    let str = `<option value="${item.id}">${item.type}</option>`;
+                    page.dialogs.elements.typeCre.append(str);
+                    page.dialogs.elements.typeEdit.append(str);
+                })
+
+            })
+            .fail((xqXHR) => {
+                App.SweetAlert.showAlertError("Không thể tải dữ liệu Tỉnh/Thành phố");
+            })
+    }
+
+    page.commands.getProductById = (productId) => {
+        return $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: App.BASE_URL_Product + "/" + productId
+        })
+            .done((data) => {
+                list = data;
+            })
+            .fail((jqXHR) => {
+                console.log("jqXHR ======");
+                console.log(jqXHR);
+            });
+    }
+
+    page.commands.getAllProducts = () => {
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: page.urls.getAllProducts
+        })
+            .done((data) => {
+                data.map(item => {
+                    let type = item.type;
+                    page.elements.showProduct.prepend(App.renderCardProduct(item, type));
+                });
+                page.commands.handleOpenModalUpdate();
+                page.commands.handleDeleteProduct();
+                page.commands.initTooltip();
+            })
+            .fail((jqXHR) => {
+                App.SweetAlert.showAlertError(App.AlertMessageVi.ERROR_500);
+            })
+    }
+
+    page.dialogs.elements.btnAdd.on("click", () => {
+        page.dialogs.elements.frmCreate.trigger("submit");
+    })
+
+    page.dialogs.elements.btnEdit.on("click", () => {
+        page.dialogs.elements.frmEdit.trigger("submit");
+    })
+
+    page.commands.handleOpenModalCreate = () => {
+        page.elements.btnShowAddModal.on("click", () => {
+            console.log("handleOpenModalCreate...");
+            page.elements.modalCreate.modal("show");
+        });
+    }
+
+    page.commands.handleOpenModalUpdate = () => {
+        $(".edit").on("click", function () {
+            console.log("handleOpenModalUpdate...");
+            let productId = $(this).data("id");
+            console.log(productId);
+            page.commands.getProductById(productId).then(() => {
+                page.dialogs.elements.productIdEdit.val(list.id);
+                page.dialogs.elements.titleEdit.val(list.title);
+                page.dialogs.elements.priceEdit.val(list.price);
+                page.dialogs.elements.typeEdit.val(list.type.id);
+                let url = page.urls.urlImage + "/" + list.image;
+                $('.image-upload-wrap1').hide();
+                page.dialogs.elements.imageEdit.attr('src', url);
+                $('.file-upload-content1').show();
+            })
+            page.elements.modalEdit.modal("show");
+        })
+    }
+
+    page.commands.handleDeleteProduct = () => {
+
+        $(".delete").on("click", function () {
+            let productId = $(this).data("id");
+            App.SweetAlert.showSuspendedConfirmDialog()
+                .then((result) => {
+                    if (result.isConfirmed === true) {
+                        page.commands.suspendedProduct(productId);
+                    }
+                });
+        })
+    }
+
+    page.commands.addProduct = () => {
+        formData.append("title", page.dialogs.elements.titleCre.val().toString());
+        formData.append("price", page.dialogs.elements.priceCre.val().toString());
+        formData.append("file", page.elements.imageFile[0].files[0]);
+        formData.append("type", page.dialogs.elements.typeCre.val().toString());
+
+        $.ajax({
+            type: "POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            url: page.urls.addProduct,
+            data: formData
+        }).done((data) => {
+            let type = data.type;
+            App.renderCardProduct(data, type);
+            page.elements.modalCreate.modal("hide");
+            page.commands.initTooltip();
+            page.commands.waitingOpenModal();
+            page.commands.removeformData();
+            App.IziToast.showSuccessAlert(App.AlertMessageVi.SUCCESS_CREATED);
+        }).fail((jqXHR) => {
+            page.dialogs.elements.renderErrorCre.append(App.renderErrorCre(jqXHR.responseJSON));
+            page.commands.removeformData();
+            App.IziToast.showErrorAlert(App.AlertMessageVi.ERROR_CREATED);
+        })
+    }
+
+    page.commands.editProduct = () => {
+        formData.append("title", page.dialogs.elements.titleEdit.val().toString());
+        formData.append("price", page.dialogs.elements.priceEdit.val().toString());
+        formData.append("file", page.elements.imageFileEdit[0].files[0]);
+        formData.append("type", page.dialogs.elements.typeEdit.val().toString());
+        let productId = page.dialogs.elements.productIdEdit.val()
+        $.ajax({
+            type: "POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            url: page.urls.updateProduct + "/" + productId,
+            data: formData
+        })
+            .done((data) => {
+                let card = $("#div_" + data.id);
+                let type = data.type;
+
+                page.elements.modalEdit.modal("hide");
+                card.replaceWith(App.renderCardProduct(data, type));
+                page.commands.initTooltip();
+                page.commands.waitingOpenModal();
+                page.commands.removeformData();
+                App.SweetAlert.showAlertSuccess(App.AlertMessageVi.SUCCESS_UPDATED);
+            })
+            .fail((jqXHR) => {
+                page.dialogs.elements.renderErrorCre.append(App.renderErrorUp(jqXHR.responseJSON));
+                page.commands.removeformData();
+                App.SweetAlert.showAlertError(App.AlertMessageVi.ERROR_400);
+            })
+    }
+
+    page.commands.suspendedProduct = (productId) => {
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "DELETE",
+            url: page.urls.delete + "/" + productId
+        })
+            .done(() => {
+                console.log("delete product")
+                $("#div_" + productId).remove();
+                page.commands.waitingOpenModal();
+                App.SweetAlert.showAlertSuccess(App.AlertMessageVi.SUCCESS_DEACTIVATE);
+            })
+            .fail((jqXHR) => {
+                if (jqXHR.status === 403) {
+                    App.SweetAlert.showAlertError(App.AlertMessageVi.ERROR_403);
+                }
+            })
+    }
+
+    page.commands.handleGoToUserList = () => {
+        $("#btnGoUser").on("click", () => {
+            $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "GET",
+                url: page.urls.goToUser
+            })
+                .done((data) => {
+                    window.location.href = "/user";
+                })
+                .fail((jqXHR) => {
+                    if (jqXHR.status === 403) {
+                        App.SweetAlert.showAlertError(App.AlertMessageVi.ERROR_403);
+                    }
+                })
+        })
+    }
+
+    page.dialogs.elements.frmCreate.validate({
+        rules: {
+            titleCre: {
+                required: true,
+                minlength: 2,
+                maxlength: 20
+            },
+            priceCre: {
+                required: true,
+                min: 100000,
+                max: 100000000
+            }
+        },
+        messages: {
+            titleCre: {
+                required: "Vui lòng nhập tên sản phẩm đầy đủ",
+                minlength: "Tên sản phẩm tối thiểu 2 ký tự",
+                maxlength: "Tên sản phẩm tối đa 20 ký tự"
+            },
+            priceCre: {
+                required: "Vui lòng nhập giá sản phẩm",
+                min: "Số tiền sản phẩm lớn hơn 100.000 Vnđ",
+                max: "Số tiền sản phẩm thấp hơn 100.000.000 Vnđ"
+            }
+        },
+        submitHandler: function () {
+            page.commands.addProduct();
+        }
+    })
+
+    page.dialogs.elements.frmEdit.validate({
+        rules: {
+            titleEdit: {
+                required: true,
+                minlength: 2,
+                maxlength: 20
+            },
+            priceEdit: {
+                required: true,
+                min: 100000,
+                max: 100000000
+            },
+            imageFileEdit: {
+                required: true,
+            }
+        },
+        messages: {
+            titleEdit: {
+                required: "Vui lòng nhập tên sản phẩm đầy đủ",
+                minlength: "Tên sản phẩm tối thiểu 2 ký tự",
+                maxlength: "Tên sản phẩm tối đa 20 ký tự"
+            },
+            priceCre: {
+                required: "Vui lòng nhập giá sản phẩm",
+                min: "Số tiền sản phẩm lớn hơn 100.000 Vnđ",
+                max: "Số tiền sản phẩm thấp hơn 100.000.000 Vnđ"
+            },
+            imageFileEdit: {
+                required: "Vui lòng upload ảnh"
+            }
+        },
+        submitHandler: function () {
+            page.commands.editProduct();
+        }
+    });
+
+    page.commands.initTooltip = () => {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    }
+
+    page.commands.removeformData = () => {
+        formData.delete("title");
+        formData.delete("price");
+        formData.delete("file");
+        formData.delete("type");
+    }
+
+    page.commands.removeEventOpenModal = () => {
+        $("#btnShowAddModal").on();
+        $("#btnShowEditModal").off();
+        $(".delete").off();
+    }
+
+    page.initializeEventControl = () => {
+        page.commands.removeEventOpenModal();
+        page.commands.handleOpenModalCreate();
+        page.commands.handleOpenModalUpdate();
+        page.commands.handleDeleteProduct();
+        page.commands.handleGoToUserList();
+    }
+
+    page.commands.waitingOpenModal = () => {
+        page.commands.removeEventOpenModal();
+        page.commands.handleOpenModalUpdate();
+        page.commands.handleDeleteProduct();
+    }
+
+    page.loadData = () => {
+        page.commands.getAllProducts();
+        page.commands.getAllType();
+    }
+
+    $(() => {
+        page.loadData();
+
+        page.initializeEventControl();
+    })
+
+</script>
+</body>
+
+</html>

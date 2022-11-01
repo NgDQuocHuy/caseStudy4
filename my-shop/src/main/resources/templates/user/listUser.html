@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <title>Quốc Huy Shop</title>
+    <th:block th:replace="layouts/head"/>
+    <style>
+        .fl {
+            float: left;
+        }
+
+        .card-registration .select-input.form-control[readonly]:not([disabled]) {
+            font-size: 1rem;
+            line-height: 2.15;
+            padding-left: .75em;
+            padding-right: .75em;
+        }
+
+        .card-registration .select-arrow {
+            top: 13px;
+        }
+
+        .hero-image {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/assets/shop/img/sp_online_phone82_generated.jpg");
+
+            height: 400px;
+
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+
+        /* Place text in the middle of the image */
+        .hero-text h1 {
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 5rem;
+            font-family: "Comic Sans MS";
+        }
+    </style>
+</head>
+
+<body>
+<div class="hero-image">
+    <div class="hero-text">
+        <h1>QHuy Shop</h1>
+        <!--        <button>Hire me</button>-->
+    </div>
+</div>
+<header id="header" class="navbar navbar-expand-lg navbar-height navbar-flush navbar-container navbar-bordered">
+    <div class="navbar-nav-wrap">
+
+        <div class="navbar-nav-wrap-content-right">
+
+            <ul class="navbar-nav align-items-center flex-row">
+                <li>
+                    <div class="col-sm-auto">
+                            <a class="btn btn-secondary" href="/logout">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+<main id="content" role="main" class="main">
+    <div class="content container-fluid">
+        <div class="page-header">
+            <div class="row align-items-center mb-3">
+                <div class="col-sm mb-2 mb-sm-0">
+                </div>
+
+            </div>
+            <div class="js-nav-scroller hs-nav-scroller-horizontal">
+                <ul class="nav nav-tabs page-header-tabs" id="pageHeaderTab" role="tablist">
+                    <li class="nav-item">
+                        <h4 class="text-black"><a class="nav-link" href="/">All Products</a></h4>
+                        <input type="hidden" id="currentRow">
+                    </li>
+                    <li class="nav-item">
+                        <h4><a class="nav-link active" href="/user">All Users</a></h4>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive mt-3">
+                    <table class="table table-hover table-centered mb-0">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Fullname</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbUser">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="product/modalCreate :: modalCreate"/>
+<th:block th:replace="product/modalEdit :: modalEdit"/>
+
+<th:block th:replace="layouts/script"/>
+<script>
+
+    let page = {
+        urls: {
+            getAllUser: App.BASE_URL_User,
+        },
+        elements: {},
+        loadData: {},
+        commands: {},
+        dialogs: {
+            elements: {},
+            loadData: {},
+            commands: {},
+        },
+        initializeEventControl: {}
+    }
+
+    // let User = new User();
+    page.elements.showUser = $("#tbUser");
+
+    page.commands.getAllUser = () => {
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: page.urls.getAllUser
+        })
+            .done((data) => {
+                data.map(item => {
+                    console.log(item)
+                    $("#tbUser").prepend(App.renderUser(item));
+                });
+            })
+            .fail((jqXHR) => {
+                App.SweetAlert.showAlertError(App.AlertMessageVi.ERROR_500);
+            })
+    }
+
+    page.commands.getAllUser();
+
+</script>
+</body>
+
+</html>

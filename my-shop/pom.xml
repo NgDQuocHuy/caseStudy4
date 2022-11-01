@@ -9,11 +9,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.quochuy</groupId>
-    <artifactId>spb-ajax-banking-jwt</artifactId>
+    <artifactId>my-shop</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>spb-ajax-banking-jwt</name>
-    <description>spb-ajax-banking-jwt</description>
+    <name>my-shop</name>
+    <description>my-shop</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -113,6 +113,18 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.11.2</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http44</artifactId>
+            <version>1.27.0</version>
         </dependency>
     </dependencies>
 
